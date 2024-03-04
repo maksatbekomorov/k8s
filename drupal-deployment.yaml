@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: drupal
+  name: drupal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drupal
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: drupal
+    spec:
+      containers:
+      - image: drupal:latest
+        name: drupal
+        resources: {}
+        ports:
+          - containerPort: 80
+        #command: ["/bin/bash", "-c" ]
+        #args:  ["sleep 1000 && cp  -r /usr/src/drupal/* /var/www/html && php installation/drupal.php install --site-name=drupaldev --admin-user=admin --admin-username=admin --admin-password=kube-still-rocks --admin-email=admin@example.com --db-type=mysql --db-host=mariadb --db-user=admin --db-pass=kube-still-rocks --db-name=myDB && apache2-foreground"]
+        envFrom:
+        - secretRef:
+            name: drupal-env
+status: {}

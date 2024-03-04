@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ibank-deployment
+  name: ibank-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ibank-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ibank-deployment
+    spec:
+      containers:
+      - image: maksatbekomorov/ibank:v01
+        name: ibank
+        resources: {}
+        ports:
+          - containerPort: 5000
+status: {}

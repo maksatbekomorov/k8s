@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mariadb
+  name: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - image: mariadb:11.3.2
+        name: mariadb
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mariadb-volume-1
+        - mountPath: /etc/mysql/conf.d
+          name: mariadb-config-volume
+        resources:
+          limits:
+            memory: "2048Mi"
+            cpu: 1000m
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-root-password
+                key: password
+        envFrom:
+        - secretRef:
+            name: mariadb-user-creds
+      volumes:
+      - name: mariadb-volume-1
+        persistentVolumeClaim:
+          claimName: mariadb-pvc
+      - configMap:
+          name: mariadb-config
+          items: 
+            - key: max_allowed_packet.cnf
+              path: max_allowed_packet.cnf
+        name: mariadb-config-volume
+status: {}
