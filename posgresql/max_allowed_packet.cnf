@@ -1,0 +1,2 @@
+[postgresqld]
+max_allowed_packet = 64M 

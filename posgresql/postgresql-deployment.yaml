@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: postgresql
+  name: postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: postgresql
+    spec:
+      containers:
+      - image: postgres:latest
+        name: postgresql
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql
+          name: postgresql-volume-1
+        # - mountPath: /etc/mysql/conf.d
+        #   name: postgresql-config-volume
+        resources:
+          limits:
+            memory: "2048Mi"
+            cpu: 1000m
+        # env:
+        #   - name: POSTGRESQL_ROOT_PASSWORD
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: postgresql-root-password
+        #         key: password
+        envFrom:
+        - secretRef:
+            name: postgresql-root-password
+      volumes:
+      - name: postgresql-volume-1
+        persistentVolumeClaim:
+          claimName: postgresql-pvc
+      # - configMap:
+      #     name: postgresql-config
+      #     items: 
+      #       - key: max_allowed_packet.cnf
+      #         path: max_allowed_packet.cnf
+      # name: postgresql-config-volume
+status: {}
