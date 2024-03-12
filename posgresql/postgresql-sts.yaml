@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-set
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  serviceName: "postgresql"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: postgresql
+        image: postgres:latest
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: postgresql-store
+          mountPath: /var/lib/mysql
+        # env:
+        #   - name: POSTGRES_PASSWORD
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: postgresql-root-password
+        #         key: password
+        envFrom:
+        - secretRef:
+            name: postgresql-root-password      
+  volumeClaimTemplates:
+  - metadata:
+      name: postgresql-store
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 2Gi
